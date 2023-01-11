@@ -30,6 +30,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -125,42 +126,33 @@ public class DrivetrainSubsystem extends SubsystemBase {
          new CANSparkMax(FRONT_LEFT_MODULE_STEER_MOTOR, MotorType.kBrushless), 
          new CANCoder(FRONT_LEFT_MODULE_STEER_ENCODER), SwerveModule.SwerveModuleLocation.FrontLeft, 
          Mk4SwerveModuleHelper.GearRatio.L2,
-        FRONT_LEFT_MODULE_STEER_OFFSET, wheelDiameter, driveTrainWidth, wheelBase);
-
+        FRONT_LEFT_MODULE_STEER_OFFSET, 4, DRIVETRAIN_TRACKWIDTH_METERS, DRIVETRAIN_WHEELBASE_METERS); //Drive Train width supposed to be in meters or is there a function to convert? (I input in inches) Can we use
+//Wheel diameter is in 4 inches, do we need meters? Don't know where to find wheel Base
 
     // We will do the same for the other modules
-    m_frontRightModule = Mk4SwerveModuleHelper.createNeo(
-            tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(2, 0),
+    m_frontRightModule = new SwerveModule<CANSparkMax,CANSparkMax,CANCoder>(
+            new CANSparkMax((FRONT_RIGHT_MODULE_DRIVE_MOTOR, MotorType.kBrushless),
+            new CANSparkMax(FRONT_RIGHT_MODULE_STEER_MOTOR, MotorType.kBrushless),
+            new CANCoder(FRONT_RIGHT_MODULE_STEER_ENCODER), SwerveModule.SwerveModuleLocation.FrontRight,
             Mk4SwerveModuleHelper.GearRatio.L2,
-            FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-            FRONT_RIGHT_MODULE_STEER_MOTOR,
-            FRONT_RIGHT_MODULE_STEER_ENCODER,
-            FRONT_RIGHT_MODULE_STEER_OFFSET
-    );
+            FRONT_RIGHT_MODULE_STEER_OFFSET, 4, 23.75, 23.75); //Drive Train width supposed to be in meters or is there a function to convert? (I input in inches)
+//Wheel diameter is in 4 inches, do we need meters? Don't know where to find wheel Base
 
-    m_backLeftModule = Mk4SwerveModuleHelper.createNeo(
-            tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(4, 0),
+    m_backRightModule = new SwerveModule<CANSparkMax,CANSparkMax,CANCoder>(
+            new CANSparkMax((BACK_RIGHT_MODULE_DRIVE_MOTOR, MotorType.kBrushless),
+            new CANSparkMax(BACK_RIGHT_MODULE_STEER_MOTOR, MotorType.kBrushless),
+            new CANCoder(BACK_RIGHT_MODULE_STEER_ENCODER), SwerveModule.SwerveModuleLocation.BackRight,
             Mk4SwerveModuleHelper.GearRatio.L2,
-            BACK_LEFT_MODULE_DRIVE_MOTOR,
-            BACK_LEFT_MODULE_STEER_MOTOR,
-            BACK_LEFT_MODULE_STEER_ENCODER,
-            BACK_LEFT_MODULE_STEER_OFFSET
-    );
+            BACK_RIGHT_MODULE_STEER_OFFSET, wheelDiameter, 23.75, wheelBase); //Drive Train width supposed to be in meters or is there a function to convert? (I input in inches)
+//Wheel diameter is in 4 inches, do we need meters? Don't know where to find wheel Base
 
-    m_backRightModule = Mk4SwerveModuleHelper.createNeo(
-            tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(6, 0),
+    m_backLeftModule = new SwerveModule<CANSparkMax,CANSparkMax,CANCoder>(
+            new CANSparkMax(BACK_LEFT_MODULE_DRIVE_MOTOR,MotorType.kBrushless),
+            new CANSparkMax(BACK_LEFT_MODULE_STEER_MOTOR, MotorType.kBrushless),
+            new CANCoder(BACK_LEFT_MODULE_STEER_ENCODER), SwerveModule.SwerveModuleLocation.BackLeft,
             Mk4SwerveModuleHelper.GearRatio.L2,
-            BACK_RIGHT_MODULE_DRIVE_MOTOR,
-            BACK_RIGHT_MODULE_STEER_MOTOR,
-            BACK_RIGHT_MODULE_STEER_ENCODER,
-            BACK_RIGHT_MODULE_STEER_OFFSET
-    );
+            BACK_LEFT_MODULE_STEER_OFFSET, wheelDiameter, 23.75, wheelBase); //Drive Train width supposed to be in meters or is there a function to convert? (I input in inches)
+//Wheel diameter is in 4 inches, do we need meters? Don't know where to find wheel Base
 
     SwerveDrive<CANSparkMax,CANSparkMax> drive = new SwerveDrive<>(m_backLeftModule, m_backLeftModule, m_frontRightModule, m_backRightModule, WPI_Pigeon2, MAX_VELOCITY_METERS_PER_SECOND);
 
