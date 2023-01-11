@@ -127,6 +127,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
          Mk4SwerveModuleHelper.GearRatio.L2,
         FRONT_LEFT_MODULE_STEER_OFFSET, wheelDiameter, driveTrainWidth, wheelBase);
 
+
     // We will do the same for the other modules
     m_frontRightModule = Mk4SwerveModuleHelper.createNeo(
             tab.getLayout("Front Right Module", BuiltInLayouts.kList)
@@ -160,6 +161,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
+
+    SwerveDrive<CANSparkMax,CANSparkMax> drive = new SwerveDrive<>(m_backLeftModule, m_backLeftModule, m_frontRightModule, m_backRightModule, WPI_Pigeon2, MAX_VELOCITY_METERS_PER_SECOND);
+
   }
 
   /**
