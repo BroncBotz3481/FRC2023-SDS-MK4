@@ -24,12 +24,11 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
 
-import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -39,9 +38,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.robotdrives.swerve.SwerveModule;
 
-public class DrivetrainSubsystem extends SubsystemBase {
+public class DrivetrainSubsystemSDS extends SubsystemBase {
   /**
    * The maximum voltage that will be delivered to the drive motors.
    * <p>
@@ -91,15 +89,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
 //  private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
 
   // These are our modules. We initialize them in the constructor.
-  private final SwerveModule<CANSparkMax,CANSparkMax,CANCoder> m_frontLeftModule;
-  private final SwerveModule<CANSparkMax,CANSparkMax,CANCoder> m_frontRightModule;
-  private final SwerveModule<CANSparkMax,CANSparkMax,CANCoder> m_backLeftModule;
-  private final SwerveModule<CANSparkMax,CANSparkMax,CANCoder> m_backRightModule;
+  private final SwerveModule m_frontLeftModule;
+  private final SwerveModule m_frontRightModule;
+  private final SwerveModule m_backLeftModule;
+  private final SwerveModule m_backRightModule;
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-  public DrivetrainSubsystem() {
+  public DrivetrainSubsystemSDS() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+
     // There are 4 methods you can call to create your swerve modules.
     // The method you use depends on what motors you are using.
     //
@@ -120,12 +119,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // By default we will use Falcon 500s in standard configuration. But if you use a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
     // FIXME Setup motor configuration // Dylan, Vishal join the inteliJ code with me <-- Omar
-    m_frontLeftModule = new SwerveModule<CANSparkMax,CANSparkMax,CANCoder>(
-        new CANSparkMax(FRONT_LEFT_MODULE_DRIVE_MOTOR,MotorType.kBrushless),
-         new CANSparkMax(FRONT_LEFT_MODULE_STEER_MOTOR, MotorType.kBrushless), 
-         new CANCoder(FRONT_LEFT_MODULE_STEER_ENCODER), SwerveModule.SwerveModuleLocation.FrontLeft, 
-         Mk4SwerveModuleHelper.GearRatio.L2,
-        FRONT_LEFT_MODULE_STEER_OFFSET, wheelDiameter, driveTrainWidth, wheelBase);
+    m_frontLeftModule = Mk4SwerveModuleHelper.createNeo(
+            // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
+            tab.getLayout("Front Left Module", BuiltInLayouts.kList)
+                    .withSize(2, 4)
+                    .withPosition(0, 0),
+            // This can either be STANDARD or FAST depending on your gear configuration
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            // This is the ID of the drive motor
+            FRONT_LEFT_MODULE_DRIVE_MOTOR,
+            // This is the ID of the steer motor
+            FRONT_LEFT_MODULE_STEER_MOTOR,
+            // This is the ID of the steer encoder
+            FRONT_LEFT_MODULE_STEER_ENCODER,
+            // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
+            FRONT_LEFT_MODULE_STEER_OFFSET
+    );
 
     // We will do the same for the other modules
     m_frontRightModule = Mk4SwerveModuleHelper.createNeo(
